@@ -23,7 +23,7 @@ final pipeline = const Pipeline()
 A small workable example:
 
 ```dart
-import 'dart:io';
+import 'dart:io' show Cookie;
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
@@ -42,7 +42,7 @@ void main(List<String> args) async {
   router.get('/logout', _handleLogout);
   router.get('/logout/', _handleLogout);
   final staticHandler =
-      createStaticHandler('../web', defaultDocument: 'index.html');
+      createStaticHandler('web', defaultDocument: 'index.html');
   final handler = Cascade().add(staticHandler).add(router).handler;
   final pipeline = const Pipeline()
       .addMiddleware(logRequests())
@@ -74,7 +74,12 @@ Future<Response> _handleHome(Request request) async {
   body = body.replaceAll('{{cookies}}',
       cookies.entries.map((e) => '${e.key}: ${e.value}').join('<br />'));
   request.addCookie(Cookie('foo', 'Foo'));
-  request.addCookie(Cookie('baz', 'Baz'));
+  if (!cookies.containsKey('baz')) {
+    request.addCookie(Cookie('baz', 'Baz'));
+  } else {
+    request.removeCookie(Cookie('baz', ''));
+  }
+
   return _render(body);
 }
 

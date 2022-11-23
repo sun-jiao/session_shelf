@@ -54,4 +54,10 @@ extension RequestCookiesExt on Request {
   Map<String, String> getCookies() {
     return _parseCookieHeader(this);
   }
+
+  void removeCookie(Cookie cookie) {
+    cookie.expires = DateTime(1970);
+    final cookies = context[_cookiesKey] as List<Cookie>;
+    cookies.add(cookie);
+  }
 }
