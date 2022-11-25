@@ -1,7 +1,7 @@
 name: shelf_session
 description: The `shelf_session` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`.
 repository:  https://github.com/mezoni/shelf_session
-version: 0.1.1
+version: 0.1.2
 environment:
   sdk: '>=2.18.0 <3.0.0'
 dependencies:

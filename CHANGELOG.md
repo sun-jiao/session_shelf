@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Added some documentation.
+
 ## 0.1.1
 
 - Added static extension method `removeCookie(Cookie cookie)` to the `Request` class.

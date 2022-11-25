@@ -4,6 +4,7 @@ import 'package:shelf/shelf.dart';
 
 const _cookiesKey = 'shelf_session.cookies';
 
+/// Returns the cookie middleware.
 Middleware cookiesMiddleware() {
   return (Handler innerHandler) {
     return (Request request) async {
@@ -46,15 +47,21 @@ Map<String, String> _parseCookieHeader(Request request) {
 }
 
 extension RequestCookiesExt on Request {
+  /// Add cookies to the list of cookies. A list of cookies will be sent along
+  /// with response.
   void addCookie(Cookie cookie) {
     final cookies = context[_cookiesKey] as List<Cookie>;
     cookies.add(cookie);
   }
 
+  /// Returns the cookies received from the request. The return value does not
+  /// include cookies added after the request was received.
   Map<String, String> getCookies() {
     return _parseCookieHeader(this);
   }
 
+  /// Changes the cookie's expiration date and adds it to the cookie list. A
+  /// list of cookies will be sent along with response.
   void removeCookie(Cookie cookie) {
     cookie.expires = DateTime(1970);
     final cookies = context[_cookiesKey] as List<Cookie>;

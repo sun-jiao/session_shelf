@@ -9,6 +9,7 @@ const _sessionKey = 'shelf_session.session_id';
 
 final Map<String, Session> _sessions = {};
 
+/// Returns the session middleware.
 Middleware sessionMiddleware() {
   return (Handler innerHandler) {
     return (Request request) async {
@@ -99,20 +100,27 @@ Map<String, String> _parseCookieHeader(Request request) {
 }
 
 class Session {
+  /// Session lifetime.
   static Duration lifetime = Duration(minutes: 30);
 
+  // The session name is a global value used as a cookie name to store the
+  // session id.
   static String name = 'shelf_session_id';
 
+  /// Session data.
   final Map<String, Object?> data = {};
 
+  /// Session expiration date.
   DateTime expires = DateTime.now().add(lifetime);
 
+  // Unique session id.
   String id;
 
   Session._({
     required this.id,
   });
 
+  /// Creates a new session, assigns it a unique id and returns that session.
   static Session createSession(Request request) {
     final sessionId = _getSessionId(request);
     final result = Session._(
@@ -122,11 +130,14 @@ class Session {
     return result;
   }
 
+  /// Invalidates the session for the specified request.
   static void deleteSession(Request request) {
     final sessionId = _getSessionId(request);
     _sessions.remove(sessionId);
   }
 
+  /// Returns the session for the specified request, if it was previously
+  /// created; otherwise returns null.
   static Session? getSession(Request request) {
     final sessionId = _getSessionId(request);
     final now = DateTime.now();
