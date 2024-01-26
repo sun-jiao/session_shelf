@@ -3,9 +3,7 @@ import 'dart:io' show Cookie;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:shelf_session/cookies_middleware.dart';
-import 'package:shelf_session/session_middleware.dart';
-import 'package:shelf_static/shelf_static.dart';
+import 'package:shelf_session/shelf_session.dart';
 
 void main(List<String> args) async {
   final router = Router();
@@ -16,9 +14,7 @@ void main(List<String> args) async {
   router.post('/login/', _handleLogin);
   router.get('/logout', _handleLogout);
   router.get('/logout/', _handleLogout);
-  final staticHandler =
-      createStaticHandler('web', defaultDocument: 'index.html');
-  final handler = Cascade().add(staticHandler).add(router).handler;
+  final handler = Cascade().add(router).handler;
   final pipeline = const Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(cookiesMiddleware())
