@@ -12,7 +12,7 @@ const _sessionKey = 'shelf_session.session_id';
 Middleware sessionMiddleware() {
   return (Handler innerHandler) {
     return (Request request) async {
-      request = _addSessionIdToRequest(request);
+      request = await _addSessionIdToRequest(request);
       final sessionId = getSessionId(request);
       final requestedUri = request.requestedUri;
       final isSecure = requestedUri.scheme == 'https';
@@ -30,7 +30,7 @@ Middleware sessionMiddleware() {
       cookie.httpOnly = true;
       request.addCookie(cookie);
       final response = await innerHandler(request);
-      final session = Session.storage.getSession(sessionId);
+      final session = await Session.storage.getSession(sessionId);
       if (session != null) {
         session.expires = expires;
       }
@@ -49,10 +49,10 @@ String getSessionId(Request request) {
   return context[_sessionKey] as String;
 }
 
-Request _addSessionIdToRequest(Request request) {
+Future<Request> _addSessionIdToRequest(Request request) async {
   final cookies = _parseCookieHeader(request);
   var sessionId = cookies[Session.name];
-  sessionId ??= _generateSessionId();
+  sessionId ??= await _generateSessionId();
   request = request.change(context: {
     _sessionKey: sessionId,
   });
@@ -80,10 +80,10 @@ Map<String, String> _parseCookieHeader(Request request) {
   }
 }
 
-String _generateSessionId() {
+Future<String> _generateSessionId() async {
   while (true) {
     final result = _getRandomString(32);
-    if (!Session.storage.sessionExist(result)) {
+    if (!await Session.storage.sessionExist(result)) {
       return result;
     }
   }

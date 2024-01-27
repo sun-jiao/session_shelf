@@ -33,7 +33,7 @@ const _menu = '''
 
 Future<Response> _handleHome(Request request) async {
   final userManager = UserManager();
-  final user = userManager.getUser(request);
+  final user = await userManager.getUser(request);
   var body = '$_menu{{message}}<br />{{cookies}}';
   if (user == null) {
     body = body.replaceAll('{{message}}', 'You are not logged in');
@@ -103,8 +103,8 @@ class User {
 }
 
 class UserManager {
-  User? getUser(Request request) {
-    final session = Session.getSession(request);
+  Future<User?> getUser(Request request) async {
+    final session = await Session.getSession(request);
     if (session == null) {
       return null;
     }
@@ -117,9 +117,9 @@ class UserManager {
     return null;
   }
 
-  User setUser(Request request, User user) {
-    var session = Session.getSession(request);
-    session ??= Session.createSession(request);
+  Future<User> setUser(Request request, User user) async {
+    var session = await Session.getSession(request);
+    session ??= await Session.createSession(request);
     session.data['user'] = user;
     return user;
   }
