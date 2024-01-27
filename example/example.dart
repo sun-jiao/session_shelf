@@ -1,6 +1,6 @@
 import 'dart:io' show Cookie, Directory;
 
-import 'package:cryptography/cryptography.dart';
+// import 'package:cryptography/cryptography.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
@@ -126,7 +126,7 @@ class UserManager {
     var session = await Session.getSession(request);
     session ??= await Session.createSession(request);
     session.data['user'] = user.name;
-    Session.storage.saveSession(session, session.id);
+    Session.storage.saveSession(session, session.id); // This is required if you use a file storage.
     return user;
   }
 }

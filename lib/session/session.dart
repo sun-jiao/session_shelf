@@ -63,7 +63,7 @@ class Session {
   factory Session.fromJson(Map<String, dynamic> json) {
     final id = json['id'];
     if (id == null || id is! String) {
-      throw ArgumentError('The `id` is either empty or not a String.');
+      throw ArgumentError('The `Session.id` is either empty or not a String.');
     }
 
     late final int? intExpires;
@@ -73,14 +73,14 @@ class Session {
         try {
           intExpires = int.parse(jsonExpires as String);
         } catch (e) {
-          throw ArgumentError('The `expires` value is not a valid integer.');
+          throw ArgumentError('The `Session.expires` value is not a valid integer.');
         }
         break;
       case int:
         intExpires = jsonExpires as int;
         break;
       default:
-        throw ArgumentError('The `expires` value has an unexpected type.');
+        throw ArgumentError('The `Session.expires` value has an unexpected type.');
     }
     final expires = DateTime.fromMicrosecondsSinceEpoch(intExpires);
 
@@ -92,7 +92,7 @@ class Session {
         data: data,
       );
     } catch (e) {
-      throw ArgumentError('The session `data` is not in the expected format.');
+      throw ArgumentError('The `Session.data` is not in the expected format.');
     }
   }
 }
