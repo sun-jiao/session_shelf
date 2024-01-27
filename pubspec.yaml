@@ -1,6 +1,6 @@
-name: shelf_session
-description: The `shelf_session` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`.
-repository:  https://github.com/mezoni/shelf_session
+name: shelf_sessions
+description: The `shelf_sessions` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`.
+repository:  https://github.com/sun-jiao/shelf_sessions
 version: 0.1.2
 environment:
   sdk: '>=2.18.0 <3.0.0'

@@ -4,7 +4,7 @@ import 'dart:io' show Cookie, Directory;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:shelf_session/shelf_session.dart';
+import 'package:shelf_sessions/shelf_sessions.dart';
 
 void main(List<String> args) async {
   Session.storage = FileStorage.plain(Directory('shelf_session'));
