@@ -1,6 +1,5 @@
-import 'package:shelf_session/storage/session_storage.dart';
-
 import '../session/session.dart';
+import 'session_storage.dart';
 
 class MemoryStorage implements SessionStorage {
   final Map<String, Session> _sessions = {};
