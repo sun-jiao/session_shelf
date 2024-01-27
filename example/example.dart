@@ -1,4 +1,4 @@
-import 'dart:io' show Cookie;
+import 'dart:io' show Cookie, Directory;
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
@@ -6,6 +6,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_session/shelf_session.dart';
 
 void main(List<String> args) async {
+  Session.storage = PlainTextStorage(Directory('shelf_session'));
   final router = Router();
   router.get('/', _handleHome);
   router.get('/login', _handleLogin);
@@ -81,12 +82,12 @@ Future<Response> _handleLogin(Request request) async {
 
   final user = User(login);
   final userManager = UserManager();
-  userManager.setUser(request, user);
+  await userManager.setUser(request, user);
   return Response.found('/');
 }
 
 Future<Response> _handleLogout(Request request) async {
-  Session.deleteSession(request);
+  await Session.deleteSession(request);
   return Response.found('/');
 }
 
@@ -110,8 +111,8 @@ class UserManager {
     }
 
     final user = session.data['user'];
-    if (user is User) {
-      return user;
+    if (user is String) {
+      return User(user);
     }
 
     return null;
@@ -120,7 +121,8 @@ class UserManager {
   Future<User> setUser(Request request, User user) async {
     var session = await Session.getSession(request);
     session ??= await Session.createSession(request);
-    session.data['user'] = user;
+    session.data['user'] = user.name;
+    Session.storage.saveSession(session, session.id);
     return user;
   }
 }

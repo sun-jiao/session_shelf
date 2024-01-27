@@ -22,7 +22,7 @@ class PlainTextStorage implements SessionStorage {
       if (file is File && regex.hasMatch(file.path.split(Platform.pathSeparator).last)) {
         try {
           final content = await file.readAsString();
-          final session = Session.fromJson(jsonDecode(content) as Map<String, dynamic>);
+          final session = Session.fromJson(json.decode(content) as Map<String, dynamic>);
           if (session.expires.compareTo(now) < 0) {
             await file.delete();
           }
@@ -49,7 +49,7 @@ class PlainTextStorage implements SessionStorage {
     try {
       if (await file.exists()) {
         final content = await file.readAsString();
-        return Session.fromJson(jsonDecode(content) as Map<String, dynamic>);
+        return Session.fromJson(json.decode(content) as Map<String, dynamic>);
       }
     } catch(e) {
       print(e);
@@ -61,9 +61,10 @@ class PlainTextStorage implements SessionStorage {
   Future<void> saveSession(Session session, String sessionId) async {
     final File file = _file(sessionId);
     try {
-      if (await file.exists()) {
-        file.openWrite().write(session.toJson());
+      if (!await file.exists()) {
+        await file.create();
       }
+      file.openWrite().write(json.encode(session.toJson()));
     } catch(e) {
       print(e);
     }

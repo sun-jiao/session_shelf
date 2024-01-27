@@ -2,3 +2,4 @@
 .dart_tool/
 .idea/
 example/temp.dart
+shelf_session/*.json
