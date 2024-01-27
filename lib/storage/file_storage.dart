@@ -91,11 +91,12 @@ class _PlainTextStorage extends FileStorage {
   @override
   Future<Session> sessionFromFile(File file) async {
     final content = await file.readAsString();
-    return Session.fromJson(json.decode(content) as Map<String, dynamic>);
+    return Session.fromJson(content);
   }
 
   @override
-  void writeSession(Session session, File file) => file.openWrite().write(json.encode(session.toJson()));
+  void writeSession(Session session, File file) =>
+      file.openWrite().write(session.toJson());
 
   @override
   File getFile(String sessionId) => File(path.join(dir.path, '$sessionId.json'));
@@ -119,12 +120,12 @@ class _CryptoStorage extends FileStorage {
       secretBox,
       secretKey: secretKey,
     );
-    return Session.fromJson(json.decode(clearText) as Map<String, dynamic>);
+    return Session.fromJson(clearText);
   }
 
   @override
   Future<void> writeSession(Session session, File file) async {
-    final clearText = json.encode(session.toJson());
+    final clearText = session.toJson();
     final secretBox = await algorithm.encryptString(
       clearText,
       secretKey: secretKey,

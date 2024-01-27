@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shelf/shelf.dart';
 import '../middleware/session_middleware.dart';
 import '../storage/memory_storage.dart';
@@ -19,6 +21,12 @@ class Session {
 
   // Session storage
   static SessionStorage storage = MemoryStorage();
+
+  // convert instances of non-basic classes to Json
+  static Object? Function(dynamic object)? toEncodable;
+
+  // get instances of non-basic classes from json
+  static Object? Function(Object? key, Object? value)? reviver;
 
   // Unique session id.
   String id;
@@ -54,20 +62,22 @@ class Session {
     return await storage.getSession(sessionId);
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
     'id': id,
     'expires': expires.microsecondsSinceEpoch,
     'data': data,
   };
+  
+  String toJson() => json.encode(toJson(), toEncodable: toEncodable);
 
-  factory Session.fromJson(Map<String, dynamic> json) {
-    final id = json['id'];
+  factory Session.fromMap(Map<String, dynamic> map) {
+    final id = map['id'];
     if (id == null || id is! String) {
       throw ArgumentError('The `Session.id` is either empty or not a String.');
     }
 
     late final int? intExpires;
-    final jsonExpires = json['expires'];
+    final jsonExpires = map['expires'];
     switch (jsonExpires.runtimeType) {
       case String:
         try {
@@ -85,7 +95,7 @@ class Session {
     final expires = DateTime.fromMicrosecondsSinceEpoch(intExpires);
 
     try {
-      final data = json['data'] as Map<String, Object?>;
+      final data = map['data'] as Map<String, Object?>;
       return Session._(
         id: id,
         expires: expires,
@@ -95,4 +105,7 @@ class Session {
       throw ArgumentError('The `Session.data` is not in the expected format.');
     }
   }
+  
+  factory Session.fromJson(String jsonStr) =>
+      Session.fromMap(json.decode(jsonStr, reviver: Session.reviver) as Map<String, dynamic>);
 }
