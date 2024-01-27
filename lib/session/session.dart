@@ -82,7 +82,8 @@ class Session {
       case String:
         try {
           intExpires = int.parse(jsonExpires as String);
-        } catch (e) {
+        } catch (e, s) {
+          print('$e\n$s');
           throw ArgumentError('The `Session.expires` value is not a valid integer.');
         }
         break;
@@ -101,7 +102,8 @@ class Session {
         expires: expires,
         data: data,
       );
-    } catch (e) {
+    } catch (e, s) {
+      print('$e\n$s');
       throw ArgumentError('The `Session.data` is not in the expected format.');
     }
   }

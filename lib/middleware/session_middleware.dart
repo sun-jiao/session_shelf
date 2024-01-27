@@ -75,7 +75,8 @@ Map<String, String> _parseCookieHeader(Request request) {
     }
 
     return result;
-  } catch (s) {
+  } catch (e, s) {
+    print('$e\n$s');
     return <String, String>{};
   }
 }

@@ -37,8 +37,8 @@ abstract class FileStorage extends SessionStorage {
           if (session.expires.compareTo(now) < 0) {
             await file.delete();
           }
-        } catch (e) {
-          print(e);
+        } catch (e, s) {
+          print('$e\n$s');
         }
       }
     }).toList());
@@ -59,8 +59,8 @@ abstract class FileStorage extends SessionStorage {
       if (await file.exists()) {
         return await sessionFromFile(file);
       }
-    } catch(e) {
-      print(e);
+    } catch (e, s) {
+      print('$e\n$s');
     }
     return null;
   }
@@ -73,8 +73,8 @@ abstract class FileStorage extends SessionStorage {
         await file.create();
       }
       await writeSession(session, file);
-    } catch(e) {
-      print(e);
+    } catch (e, s) {
+      print('$e\n$s');
     }
   }
 
