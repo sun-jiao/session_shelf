@@ -1,12 +1,16 @@
 import 'dart:io' show Cookie, Directory;
 
+import 'package:cryptography/cryptography.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_session/shelf_session.dart';
 
 void main(List<String> args) async {
-  Session.storage = PlainTextStorage(Directory('shelf_session'));
+  Session.storage = FileStorage.plain(Directory('shelf_session'));
+  // Session.storage = FileStorage.crypto(Directory('shelf_session'), AesGcm.with256bits(),
+      // This is just an example. Please DO NOT write your secret key in code.
+      // SecretKey('Shelf-!Session~!Shelf~!Session-!'.codeUnits));
   final router = Router();
   router.get('/', _handleHome);
   router.get('/login', _handleLogin);
@@ -43,8 +47,8 @@ Future<Response> _handleHome(Request request) async {
   }
 
   final cookies = request.getCookies();
-  body = body.replaceAll('{{cookies}}',
-      cookies.entries.map((e) => '${e.key}: ${e.value}').join('<br />'));
+  body = body.replaceAll(
+      '{{cookies}}', cookies.entries.map((e) => '${e.key}: ${e.value}').join('<br />'));
   request.addCookie(Cookie('foo', 'Foo'));
   if (!cookies.containsKey('baz')) {
     request.addCookie(Cookie('baz', 'Baz'));

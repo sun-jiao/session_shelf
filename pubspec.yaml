@@ -3,7 +3,7 @@ description: The `shelf_session` is the implementation of `cookiesMiddleware` an
 repository:  https://github.com/mezoni/shelf_session
 version: 0.1.2
 environment:
-  sdk: '>=2.18.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 dependencies:
   cryptography: ^2.7.0
   path: ^1.9.0
