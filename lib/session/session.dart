@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:shelf/shelf.dart';
 import '../middleware/session_middleware.dart';
-import 'session_storage.dart';
+import '../storage/memory_storage.dart';
+import '../storage/session_storage.dart';
 
 class Session {
   /// Session lifetime.
