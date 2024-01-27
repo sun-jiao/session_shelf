@@ -68,7 +68,7 @@ class Session {
     'data': data,
   };
   
-  String toJson() => json.encode(toJson(), toEncodable: toEncodable);
+  String toJson() => json.encode(toMap(), toEncodable: toEncodable);
 
   factory Session.fromMap(Map<String, dynamic> map) {
     final id = map['id'];
