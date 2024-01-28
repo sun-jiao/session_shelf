@@ -9,7 +9,9 @@ import 'package:shelf_sessions/storage/sql_storage.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 final plainStorage = FileStorage.plain(Directory('shelf_session'));
-final cryptoStorage = FileStorage.crypto(Directory('shelf_session'), AesGcm.with256bits(),
+final cryptoStorage = FileStorage.crypto(
+    Directory('shelf_session'),
+    AesGcm.with256bits(),
     // This is just an example. Please DO NOT write your secret key in code.
     SecretKey('Shelf-!Session~!Shelf~!Session-!'.codeUnits));
 final db = sqlite3.openInMemory();
@@ -26,6 +28,7 @@ final sqliteCryptoStorage = SqlCryptoStorage('shelf_session_', db.execute, (sql)
 void main(List<String> args) async {
   await sqliteCryptoStorage.createTable();
   Session.storage = sqliteCryptoStorage;
+  setupJsonSerializer();
   final router = Router();
   router.get('/', _handleHome);
   router.get('/login', _handleLogin);
@@ -44,6 +47,24 @@ void main(List<String> args) async {
   const port = 8080;
   final server = await io.serve(pipeline, address, port);
   print('Serving at http://${server.address.host}:${server.port}');
+}
+
+void setupJsonSerializer() {
+  Session.toEncodable = (obj) {
+    if (obj is User) {
+      return {
+        'type': 'User',
+        'name': obj.name,
+      };
+    }
+    return obj;
+  };
+  Session.reviver = (k, v) {
+    if (v is Map && v.length == 2 && v['type'] == 'User' && v.containsKey('name')) {
+      return User(v['name'] as String);
+    }
+    return v;
+  };
 }
 
 const _menu = '''
@@ -130,8 +151,8 @@ class UserManager {
     }
 
     final user = session.data['user'];
-    if (user is String) {
-      return User(user);
+    if (user is User) {
+      return user;
     }
 
     return null;
@@ -140,7 +161,7 @@ class UserManager {
   Future<User> setUser(Request request, User user) async {
     var session = await Session.getSession(request);
     session ??= await Session.createSession(request);
-    session.data['user'] = user.name;
+    session.data['user'] = user;
     Session.storage.saveSession(session, session.id); // This is required if you use a file storage.
     return user;
   }
