@@ -144,7 +144,7 @@ class SqlCryptoStorage implements SessionStorage {
     } else {
       await sqlExecute("INSERT INTO $tableName (id, nonce, cipherText, mac) "
           "VALUES ('$sessionId', '${base64.encode(secretBox.nonce)}', "
-          "'${base64.encode(secretBox.cipherText)}', '${secretBox.mac.bytes}');");
+          "'${base64.encode(secretBox.cipherText)}', '${base64.encode(secretBox.mac.bytes)}');");
     }
   }
 

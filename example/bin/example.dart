@@ -13,14 +13,19 @@ final cryptoStorage = FileStorage.crypto(Directory('shelf_session'), AesGcm.with
     // This is just an example. Please DO NOT write your secret key in code.
     SecretKey('Shelf-!Session~!Shelf~!Session-!'.codeUnits));
 final db = sqlite3.openInMemory();
-final sqlStorage = SqlStorage('shelf_session', db.execute, (sql) {
+final sqliteStorage = SqlStorage('shelf_session', db.execute, (sql) {
   final ResultSet resultSet = db.select(sql);
   return resultSet;
 });
+final sqliteCryptoStorage = SqlCryptoStorage('shelf_session_', db.execute, (sql) {
+  final ResultSet resultSet = db.select(sql);
+  return resultSet;
+  // This is just an example. Please DO NOT write your secret key in code.
+}, AesGcm.with256bits(), SecretKey('Shelf-!Session~!Shelf~!Session-!'.codeUnits));
 
 void main(List<String> args) async {
-  await sqlStorage.createTable();
-  Session.storage = sqlStorage;
+  await sqliteCryptoStorage.createTable();
+  Session.storage = sqliteCryptoStorage;
   final router = Router();
   router.get('/', _handleHome);
   router.get('/login', _handleLogin);
