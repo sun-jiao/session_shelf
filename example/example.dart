@@ -1,16 +1,26 @@
 import 'dart:io' show Cookie, Directory;
 
-// import 'package:cryptography/cryptography.dart';
+import 'package:cryptography/cryptography.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_sessions/shelf_sessions.dart';
+import 'package:shelf_sessions/storage/sql_storage.dart';
+import 'package:sqlite3/sqlite3.dart';
+
+final plainStorage = FileStorage.plain(Directory('shelf_session'));
+final cryptoStorage = FileStorage.crypto(Directory('shelf_session'), AesGcm.with256bits(),
+    // This is just an example. Please DO NOT write your secret key in code.
+    SecretKey('Shelf-!Session~!Shelf~!Session-!'.codeUnits));
+final db = sqlite3.openInMemory();
+final sqlStorage = SqlStorage('shelf_session', db.execute, (sql) {
+  final ResultSet resultSet = db.select(sql);
+  return resultSet;
+});
 
 void main(List<String> args) async {
-  Session.storage = FileStorage.plain(Directory('shelf_session'));
-  // Session.storage = FileStorage.crypto(Directory('shelf_session'), AesGcm.with256bits(),
-      // This is just an example. Please DO NOT write your secret key in code.
-      // SecretKey('Shelf-!Session~!Shelf~!Session-!'.codeUnits));
+  await sqlStorage.createTable();
+  Session.storage = sqlStorage;
   final router = Router();
   router.get('/', _handleHome);
   router.get('/login', _handleLogin);
