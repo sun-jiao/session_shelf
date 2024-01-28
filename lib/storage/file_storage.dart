@@ -9,9 +9,9 @@ import '../session/session.dart';
 import 'session_storage.dart';
 
 abstract class FileStorage extends SessionStorage {
-  // Directory to store session files
+  /// Directory to store session files
   late final Directory dir;
-  // Regex for file names;
+  /// Regex for file names;
   late final RegExp regex;
 
   static FileStorage crypto(Directory dir, Cipher algorithm, SecretKey secretKey) =>

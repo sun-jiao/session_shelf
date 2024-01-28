@@ -9,8 +9,8 @@ class Session {
   /// Session lifetime.
   static Duration lifetime = Duration(minutes: 30);
 
-  // The session name is a global value used as a cookie name to store the
-  // session id.
+  /// The session name is a global value used as a cookie name to store the
+  /// session id.
   static String name = 'shelf_session_id';
 
   /// Session data.
@@ -19,16 +19,16 @@ class Session {
   /// Session expiration date.
   DateTime expires;
 
-  // Session storage
+  /// Session storage
   static SessionStorage storage = MemoryStorage();
 
-  // convert instances of non-basic classes to Json
+  /// convert instances of non-basic classes to Json
   static Object? Function(dynamic object)? toEncodable;
 
-  // get instances of non-basic classes from json
+  /// get instances of non-basic classes from json
   static Object? Function(Object? key, Object? value)? reviver;
 
-  // Unique session id.
+  /// Unique session id.
   String id;
 
   Session._({
