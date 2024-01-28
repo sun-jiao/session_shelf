@@ -1,5 +1,5 @@
-export 'middleware/cookies_middleware.dart';
-export 'middleware/session_middleware.dart';
+export 'middleware/cookies_middleware.dart' hide getContext;
+export 'middleware/session_middleware.dart' hide getSessionId;
 export 'session/session.dart';
 export 'storage/file_storage.dart';
 export 'storage/memory_storage.dart';

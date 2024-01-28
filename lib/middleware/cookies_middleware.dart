@@ -25,8 +25,18 @@ Request _addCookiesToRequest(Request request) {
   );
 }
 
-Map<String, String> _parseCookieHeader(Request request) {
-  final cookieHeader = request.headers[HttpHeaders.cookieHeader];
+/// Returns the cookies received from the [shelf.Request] or [dart_frog.Request].
+/// The return value does not include cookies added after the request was received.
+// ignore: avoid_annotating_with_dynamic
+Map<String, String> parseCookies(dynamic request) {
+  late final Map<String, String> headers;
+  try {
+    headers = request.headers as Map<String, String>;
+  } catch(_) {
+    throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.request`');
+  }
+
+  final cookieHeader = headers[HttpHeaders.cookieHeader];
   if (cookieHeader == null || cookieHeader.isEmpty) {
     return {};
   }
@@ -47,25 +57,54 @@ Map<String, String> _parseCookieHeader(Request request) {
   }
 }
 
+// ignore: avoid_annotating_with_dynamic
+Map<String, Object> getContext(dynamic request) {
+  if (request is Request) {
+    return request.context;
+  } else {
+    try {
+      return request.shelfContext as Map<String, Object>;
+    } catch(_) {
+      throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.request`');
+    }
+  }
+}
+
+extension CookieExt on Cookie {
+  /// Add cookies to the cookies list of a [shelf.Request] or [dart_frog.Request].
+  /// A list of cookies will be sent along with response.
+  // ignore: avoid_annotating_with_dynamic
+  void addTo(dynamic request) {
+    final context = getContext(request);
+    final cookies = context[_cookiesKey] as List<Cookie>;
+    cookies.add(this);
+  }
+
+  /// Changes the cookie's expiration date and adds it to the cookie list
+  /// of a [shelf.Request] or [dart_frog.Request].
+  /// A list of cookies will be sent along with response.
+  // ignore: avoid_annotating_with_dynamic
+  void removeFrom(dynamic request) {
+    expires = DateTime(1970);
+    final context = getContext(request);
+    final cookies = context[_cookiesKey] as List<Cookie>;
+    cookies.add(this);
+  }
+}
+
 extension RequestCookiesExt on Request {
   /// Add cookies to the list of cookies. A list of cookies will be sent along
   /// with response.
-  void addCookie(Cookie cookie) {
-    final cookies = context[_cookiesKey] as List<Cookie>;
-    cookies.add(cookie);
-  }
+  @Deprecated('Replaced by [Cookie.addTo] for compatible with dart_frog.')
+  void addCookie(Cookie cookie) => cookie.addTo(this);
 
   /// Returns the cookies received from the request. The return value does not
   /// include cookies added after the request was received.
-  Map<String, String> getCookies() {
-    return _parseCookieHeader(this);
-  }
+  @Deprecated('Replaced by [parseCookie(request)] for compatible with dart_frog.')
+  Map<String, String> getCookies() => parseCookies(this);
 
   /// Changes the cookie's expiration date and adds it to the cookie list. A
   /// list of cookies will be sent along with response.
-  void removeCookie(Cookie cookie) {
-    cookie.expires = DateTime(1970);
-    final cookies = context[_cookiesKey] as List<Cookie>;
-    cookies.add(cookie);
-  }
+  @Deprecated('Replaced by [Cookie.removeFrom] for compatible with dart_frog.')
+  void removeCookie(Cookie cookie) => cookie.removeFrom(this);
 }
