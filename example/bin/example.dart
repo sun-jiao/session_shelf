@@ -1,70 +1,14 @@
-import 'dart:io' show Cookie, Directory;
+import 'dart:io' show Cookie;
 
-import 'package:cryptography/cryptography.dart';
-import 'package:mysql_client/mysql_client.dart';
+import 'package:session_shelf/session_shelf.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:session_shelf/session_shelf.dart';
-import 'package:sqlite3/sqlite3.dart' hide ResultSet;
-import 'package:sqlite3/sqlite3.dart' as sqlite show ResultSet;
 
-final algorithm = AesGcm.with256bits();
-// This is just an example. Please DO NOT write your secret key in code.
-final secretKey = SecretKey('--Session-Shelf--Session-Shelf--'.codeUnits);
-
-final plainStorage = FileStorage.plain(Directory('session_shelf'));
-final cryptoStorage = FileStorage.crypto(Directory('session_shelf'), algorithm, secretKey);
-
-final db = sqlite3.openInMemory();
-final sqliteStorage = SqlStorage('session_shelf', db.execute, (sql) {
-  final sqlite.ResultSet resultSet = db.select(sql);
-  return resultSet;
-});
-final sqliteCryptoStorage = SqlCryptoStorage('session_shelf_crypto', db.execute, (sql) {
-  final sqlite.ResultSet resultSet = db.select(sql);
-  return resultSet;
-}, algorithm, secretKey);
-
-late final SqlStorage mysqlStorage;
-late final SqlCryptoStorage mysqlCryptoStorage;
-
-Future<void> createMysqlStorages() async {
-  final conn = await MySQLConnection.createConnection(
-    host: "127.0.0.1",
-    port: 3306,
-    userName: "user",
-    password: "password",
-    databaseName: "session_shelf_example", // optional
-  );
-
-  await conn.connect();
-
-  mysqlStorage = SqlStorage('session_shelf', conn.execute, (sql) async {
-    final resultSet = await conn.execute(sql);
-    return resultSet.rows.map((row) => {
-      'id': row.colByName('id'),
-      'expires': row.colByName('expires'),
-      'data': row.colByName('data'),
-    }).toList();
-  });
-  await mysqlStorage.createTable();
-
-  mysqlCryptoStorage = SqlCryptoStorage('session_shelf_crypto', db.execute, (sql) async {
-    final resultSet = await conn.execute(sql);
-    return resultSet.rows.map((row) => {
-      'id': row.colByName('id'),
-      'cipherText': row.colByName('cipherText'),
-      'nonce': row.colByName('nonce'),
-      'mac': row.colByName('mac'),
-    }).toList();
-  }, algorithm, secretKey);
-  await mysqlCryptoStorage.createTable();
-}
+import 'storages_example.dart';
 
 void main(List<String> args) async {
-  await sqliteCryptoStorage.createTable();
-  Session.storage = sqliteCryptoStorage;
+  Session.storage = await getSqliteCryptoStorage();
   setupJsonSerializer();
   final router = Router();
   router.get('/', _handleHome);
