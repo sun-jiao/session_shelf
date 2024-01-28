@@ -23,6 +23,7 @@ class Session {
   static SessionStorage storage = MemoryStorage();
 
   // convert instances of non-basic classes to Json
+  // ignore: avoid_annotating_with_dynamic
   static Object? Function(dynamic object)? toEncodable;
 
   // get instances of non-basic classes from json
@@ -39,7 +40,8 @@ class Session {
         expires = expires ?? DateTime.now().add(lifetime);
 
   /// Creates a new session, assigns it a unique id and returns that session.
-  static Future<Session> createSession(Request request) async {
+  // ignore: avoid_annotating_with_dynamic
+  static Future<Session> createSession(dynamic request) async {
     final sessionId = getSessionId(request);
     final result = Session._(
       id: sessionId,
@@ -49,14 +51,16 @@ class Session {
   }
 
   /// Invalidates the session for the specified request.
-  static Future<void> deleteSession(Request request) async {
+  // ignore: avoid_annotating_with_dynamic
+  static Future<void> deleteSession(dynamic request) async {
     final sessionId = getSessionId(request);
     await storage.deleteSession(sessionId);
   }
 
   /// Returns the session for the specified request, if it was previously
   /// created; otherwise returns null.
-  static Future<Session?> getSession(Request request) async {
+  // ignore: avoid_annotating_with_dynamic
+  static Future<Session?> getSession(dynamic request) async {
     storage.clearOutdated();
     final sessionId = getSessionId(request);
     return await storage.getSession(sessionId);

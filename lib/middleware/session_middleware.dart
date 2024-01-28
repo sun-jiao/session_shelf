@@ -40,8 +40,19 @@ Middleware sessionMiddleware() {
   };
 }
 
-String getSessionId(Request request) {
-  final context = request.context;
+// ignore: avoid_annotating_with_dynamic
+String getSessionId(dynamic request) {
+  late final Map<String, Object> context;
+  if (request is Request) {
+    context = request.context;
+  } else {
+    try {
+      context = request.shelfContext as Map<String, Object>;
+    } catch(_) {
+      throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.request`');
+    }
+  }
+
   if (!context.containsKey(_sessionKey)) {
     throw StateError('The session id was not found in the request context');
   }
