@@ -327,7 +327,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.1.2"
+    version: "0.2.0"
   shelf_static:
     dependency: "direct main"
     description:

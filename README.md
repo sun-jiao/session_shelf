@@ -1,8 +1,10 @@
-# shelf_session
+# shelf_sessions
 
-The `shelf_session` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`.
+The `shelf_sessions` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`, to store sessions in files or SQL databases as plain or encrypted text.
 
-Version: 0.1.0
+This package is based on mezoni's (shelf_session)[https://pub.dev/packages/shelf_session], with more powerful feathers.
+
+Version: 0.2.0
 
 ## About
 
@@ -28,8 +30,7 @@ import 'dart:io' show Cookie;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:shelf_session/cookies_middleware.dart';
-import 'package:shelf_session/session_middleware.dart';
+import 'package:shelf_sessions/shelf_sessions.dart';
 import 'package:shelf_static/shelf_static.dart';
 
 void main(List<String> args) async {
@@ -42,7 +43,7 @@ void main(List<String> args) async {
   router.get('/logout', _handleLogout);
   router.get('/logout/', _handleLogout);
   final staticHandler =
-      createStaticHandler('web', defaultDocument: 'index.html');
+  createStaticHandler('web', defaultDocument: 'index.html');
   final handler = Cascade().add(staticHandler).add(router).handler;
   final pipeline = const Pipeline()
       .addMiddleware(logRequests())
@@ -62,7 +63,7 @@ const _menu = '''
 
 Future<Response> _handleHome(Request request) async {
   final userManager = UserManager();
-  final user = userManager.getUser(request);
+  final user = await userManager.getUser(request);
   var body = '$_menu{{message}}<br />{{cookies}}';
   if (user == null) {
     body = body.replaceAll('{{message}}', 'You are not logged in');
@@ -110,12 +111,12 @@ Future<Response> _handleLogin(Request request) async {
 
   final user = User(login);
   final userManager = UserManager();
-  userManager.setUser(request, user);
+  await userManager.setUser(request, user);
   return Response.found('/');
 }
 
 Future<Response> _handleLogout(Request request) async {
-  Session.deleteSession(request);
+  await Session.deleteSession(request);
   return Response.found('/');
 }
 
@@ -132,8 +133,8 @@ class User {
 }
 
 class UserManager {
-  User? getUser(Request request) {
-    final session = Session.getSession(request);
+  Future<User?> getUser(Request request) async {
+    final session = await Session.getSession(request);
     if (session == null) {
       return null;
     }
@@ -146,9 +147,9 @@ class UserManager {
     return null;
   }
 
-  User setUser(Request request, User user) {
-    var session = Session.getSession(request);
-    session ??= Session.createSession(request);
+  Future<User> setUser(Request request, User user) async {
+    var session = await Session.getSession(request);
+    session ??= await Session.createSession(request);
     session.data['user'] = user;
     return user;
   }
@@ -156,9 +157,81 @@ class UserManager {
 
 ```
 
-Session data is stored in a hash map at runtime.  
-This implementation implies that session data should only be created for authorized users.  
-This approach eliminates memory overflow in the case of various types of attacks.  
-After the expiration of the lifetime, the session data is deleted automatically (which causes the memory to be freed).  
-Timers are not used for these purposes. This happens during the creation of new sessions.  
+By default, session data is stored in a hash map at runtime.
+This implementation implies that session data should only be created for authorized users.
+This approach eliminates memory overflow in the case of various types of attacks.
+After the expiration of the lifetime, the session data is deleted automatically (which causes the memory to be freed).
+Timers are not used for these purposes. This happens during the creation of new sessions.
 
+To store sessions in files, use`FileStorage.plain`;
+
+```dart
+main() {
+  Session.storage = FileStorage.plain(Directory('shelf_sessions'));
+}
+```
+
+To store encrypted sessions in files, use`FileStorage.crypto`;
+
+```dart
+main() {
+  Session.storage = FileStorage.crypto(
+      Directory('shelf_sessions'),
+      AesGcm.with256bits(),
+      // This is just an example. Please DO NOT write your secret key in code.
+      SecretKey('Shelf~Sessions??Shelf!Sessions~!'.codeUnits));
+}
+```
+
+To store sessions in SQL database, use`SqlStorage`;
+
+```dart
+final db = sqlite3.openInMemory();
+
+main() async {
+  Session.storage = SqlStorage('shelf_sessions', db.execute, (sql) {
+    final ResultSet resultSet = db.select(sql);
+    return resultSet;
+  });
+  await Session.storage.createTable();
+}
+```
+
+To store encrypted sessions in SQL database, use`SqlCryptoStorage`;
+
+```dart
+final db = sqlite3.openInMemory();
+
+main() async {
+  Session.storage = SqlCryptoStorage('shelf_sessions_crypto', db.execute, (sql) {
+    final ResultSet resultSet = db.select(sql);
+    return resultSet;
+    // This is just an example. Please DO NOT write your secret key in code.
+  }, AesGcm.with256bits(), SecretKey('Shelf~Sessions??Shelf!Sessions~!'.codeUnits));
+  await Session.storage.createTable();
+}
+```
+
+If your `data` contains non-basic types:
+
+```dart
+void setupJsonSerializer() {
+  Session.toEncodable = (obj) {
+    if (obj is User) {
+      return {
+        'type': 'User',
+        'name': obj.name,
+      };
+    }
+    return obj;
+  };
+  Session.reviver = (k, v) {
+    if (v is Map && v.length == 2 && v['type'] == 'User' && v.containsKey('name')) {
+      return User(v['name'] as String);
+    }
+    return v;
+  };
+}
+```
+
+For other examples, see `example.dart`. Or you can implement your own `SessionStorage`.
