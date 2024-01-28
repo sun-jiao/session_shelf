@@ -2,4 +2,4 @@
 .dart_tool/
 .idea/
 shelf_session/
-example/.dart_tool/
+example/
