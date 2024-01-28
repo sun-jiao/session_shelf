@@ -35,8 +35,8 @@ class Session {
     required this.id,
     Map<String, Object?>? data,
     DateTime? expires,
-  }): data = data ?? {},
-      expires = expires ?? DateTime.now().add(lifetime);
+  })  : data = data ?? {},
+        expires = expires ?? DateTime.now().add(lifetime);
 
   /// Creates a new session, assigns it a unique id and returns that session.
   static Future<Session> createSession(Request request) async {
@@ -63,11 +63,11 @@ class Session {
   }
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'expires': expires.microsecondsSinceEpoch,
-    'data': data,
-  };
-  
+        'id': id,
+        'expires': expires.microsecondsSinceEpoch,
+        'data': data,
+      };
+
   String toJson() => json.encode(toMap(), toEncodable: toEncodable);
 
   factory Session.fromMap(Map<String, dynamic> map) {
@@ -107,7 +107,7 @@ class Session {
       throw ArgumentError('The `Session.data` is not in the expected format.');
     }
   }
-  
+
   factory Session.fromJson(String jsonStr) =>
       Session.fromMap(json.decode(jsonStr, reviver: reviver) as Map<String, dynamic>);
 }

@@ -91,8 +91,7 @@ Future<String> _generateSessionId() async {
 }
 
 String _getRandomString(int length) {
-  const chars =
-      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final rnd = Random.secure();
   return String.fromCharCodes(Iterable.generate(length, (_) {
     return chars.codeUnitAt(rnd.nextInt(chars.length));

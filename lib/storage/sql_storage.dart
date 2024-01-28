@@ -36,7 +36,8 @@ class SqlStorage implements SessionStorage {
       return Session.fromMap({
         "id": result["id"],
         "expires": result["expires"],
-        "data": json.decode(result["data"] as String, reviver: Session.reviver) as Map<String, dynamic>
+        "data":
+            json.decode(result["data"] as String, reviver: Session.reviver) as Map<String, dynamic>
       });
     }
 

@@ -17,15 +17,14 @@ abstract class FileStorage extends SessionStorage {
   static FileStorage crypto(Directory dir, Cipher algorithm, SecretKey secretKey) =>
       _CryptoStorage(dir, algorithm, secretKey);
 
-  static FileStorage plain(Directory dir) =>
-      _PlainTextStorage(dir);
+  static FileStorage plain(Directory dir) => _PlainTextStorage(dir);
 
   FutureOr<Session> sessionFromFile(File file);
 
   FutureOr<void> writeSession(Session session, File file);
 
   File getFile(String sessionId);
-  
+
   @override
   Future<void> clearOutdated() async {
     final now = DateTime.now();
@@ -43,7 +42,7 @@ abstract class FileStorage extends SessionStorage {
       }
     }).toList());
   }
-  
+
   @override
   Future<void> deleteSession(String sessionId) async {
     final File file = getFile(sessionId);
@@ -95,8 +94,7 @@ class _PlainTextStorage extends FileStorage {
   }
 
   @override
-  void writeSession(Session session, File file) =>
-      file.openWrite().write(session.toJson());
+  void writeSession(Session session, File file) => file.openWrite().write(session.toJson());
 
   @override
   File getFile(String sessionId) => File(path.join(dir.path, '$sessionId.json'));
@@ -115,7 +113,8 @@ class _CryptoStorage extends FileStorage {
   @override
   Future<Session> sessionFromFile(File file) async {
     final content = (await file.readAsString()).split('|');
-    final secretBox = SecretBox(base64.decode(content[1]), nonce: base64.decode(content[0]), mac: Mac(base64.decode(content[2])));
+    final secretBox = SecretBox(base64.decode(content[1]),
+        nonce: base64.decode(content[0]), mac: Mac(base64.decode(content[2])));
     final clearText = await algorithm.decryptString(
       secretBox,
       secretKey: secretKey,
@@ -132,8 +131,7 @@ class _CryptoStorage extends FileStorage {
     );
 
     await file.writeAsString(
-        '${base64.encode(secretBox.nonce)}|${base64.encode(secretBox.cipherText)}|${base64.encode(secretBox.mac.bytes)}'
-    );
+        '${base64.encode(secretBox.nonce)}|${base64.encode(secretBox.cipherText)}|${base64.encode(secretBox.mac.bytes)}');
   }
 
   @override
