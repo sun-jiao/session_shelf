@@ -1,8 +1,11 @@
 # session_shelf
 
+[![pub package](https://img.shields.io/pub/v/session_shelf.svg)](https://pub.dev/packages/session_shelf)
+[![License: BSD-3-Clause](https://img.shields.io/github/license/sun-jiao/session_shelf)](https://opensource.org/licenses/bsd-3-clause)
+
 The `session_shelf` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`, to store sessions in files or SQL databases as plain or encrypted text.
 
-This package is based on mezoni's (shelf_session)[https://pub.dev/packages/shelf_session], with more powerful feathers.
+This package is based on mezoni's [shelf_session](https://pub.dev/packages/shelf_session), with more powerful feathers.
 
 Version: 0.2.0
 
