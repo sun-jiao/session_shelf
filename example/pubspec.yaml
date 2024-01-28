@@ -8,7 +8,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  shelf_sessions:
+  session_shelf:
     path: ..
 
   mysql_client: ^0.0.27

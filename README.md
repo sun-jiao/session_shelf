@@ -1,6 +1,6 @@
-# shelf_sessions
+# session_shelf
 
-The `shelf_sessions` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`, to store sessions in files or SQL databases as plain or encrypted text.
+The `session_shelf` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`, to store sessions in files or SQL databases as plain or encrypted text.
 
 This package is based on mezoni's (shelf_session)[https://pub.dev/packages/shelf_session], with more powerful feathers.
 
@@ -30,7 +30,7 @@ import 'dart:io' show Cookie;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:shelf_sessions/shelf_sessions.dart';
+import 'package:session_shelf/session_shelf.dart';
 import 'package:shelf_static/shelf_static.dart';
 
 void main(List<String> args) async {
@@ -167,7 +167,7 @@ To store sessions in files, use`FileStorage.plain`;
 
 ```dart
 main() {
-  Session.storage = FileStorage.plain(Directory('shelf_sessions'));
+  Session.storage = FileStorage.plain(Directory('session_shelf'));
 }
 ```
 
@@ -175,11 +175,7 @@ To store encrypted sessions in files, use`FileStorage.crypto`;
 
 ```dart
 main() {
-  Session.storage = FileStorage.crypto(
-      Directory('shelf_sessions'),
-      AesGcm.with256bits(),
-      // This is just an example. Please DO NOT write your secret key in code.
-      SecretKey('Shelf~Sessions??Shelf!Sessions~!'.codeUnits));
+  Session.storage = FileStorage.crypto(Directory('session_shelf'), algorithm, secretKey);
 }
 ```
 
@@ -189,7 +185,7 @@ To store sessions in SQL database, use`SqlStorage`;
 final db = sqlite3.openInMemory();
 
 main() async {
-  Session.storage = SqlStorage('shelf_sessions', db.execute, (sql) {
+  Session.storage = SqlStorage('session_shelf', db.execute, (sql) {
     final ResultSet resultSet = db.select(sql);
     return resultSet;
   });
@@ -203,11 +199,11 @@ To store encrypted sessions in SQL database, use`SqlCryptoStorage`;
 final db = sqlite3.openInMemory();
 
 main() async {
-  Session.storage = SqlCryptoStorage('shelf_sessions_crypto', db.execute, (sql) {
+  Session.storage = SqlCryptoStorage('session_shelf_crypto', db.execute, (sql) {
     final ResultSet resultSet = db.select(sql);
     return resultSet;
     // This is just an example. Please DO NOT write your secret key in code.
-  }, AesGcm.with256bits(), SecretKey('Shelf~Sessions??Shelf!Sessions~!'.codeUnits));
+  }, algorithm, secretKey);
   await Session.storage.createTable();
 }
 ```

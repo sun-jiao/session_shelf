@@ -1,6 +1,6 @@
-name: shelf_sessions
-description: The `shelf_sessions` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`, to store sessions in files or SQL databases as plain or encrypted text.
-repository:  https://github.com/sun-jiao/shelf_sessions
+name: session_shelf
+description: The `session_shelf` is the implementation of `cookiesMiddleware` and  `sessionMiddleware` for `shelf`, to store sessions in files or SQL databases as plain or encrypted text.
+repository:  https://github.com/sun-jiao/session_shelf
 version: 0.2.0
 environment:
   sdk: '>=2.18.0 <4.0.0'

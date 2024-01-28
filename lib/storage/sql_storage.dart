@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:cryptography/cryptography.dart';
 
-import '../shelf_sessions.dart';
+import '../session/session.dart';
+import 'session_storage.dart';
+
 
 class SqlStorage implements SessionStorage {
   SqlStorage(this.tableName, this.sqlExecute, this.sqlSelect);

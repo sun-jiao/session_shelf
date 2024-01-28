@@ -5,26 +5,25 @@ import 'package:mysql_client/mysql_client.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:shelf_sessions/shelf_sessions.dart';
+import 'package:session_shelf/session_shelf.dart';
 import 'package:sqlite3/sqlite3.dart' hide ResultSet;
 import 'package:sqlite3/sqlite3.dart' as sqlite show ResultSet;
 
 final algorithm = AesGcm.with256bits();
 // This is just an example. Please DO NOT write your secret key in code.
-final secretKey = SecretKey('Shelf~Sessions??Shelf!Sessions~!'.codeUnits);
+final secretKey = SecretKey('--Session-Shelf--Session-Shelf--'.codeUnits);
 
-final plainStorage = FileStorage.plain(Directory('shelf_sessions'));
-final cryptoStorage = FileStorage.crypto(Directory('shelf_sessions'), algorithm, secretKey);
+final plainStorage = FileStorage.plain(Directory('session_shelf'));
+final cryptoStorage = FileStorage.crypto(Directory('session_shelf'), algorithm, secretKey);
 
 final db = sqlite3.openInMemory();
-final sqliteStorage = SqlStorage('shelf_sessions', db.execute, (sql) {
+final sqliteStorage = SqlStorage('session_shelf', db.execute, (sql) {
   final sqlite.ResultSet resultSet = db.select(sql);
   return resultSet;
 });
-final sqliteCryptoStorage = SqlCryptoStorage('shelf_sessions_crypto', db.execute, (sql) {
+final sqliteCryptoStorage = SqlCryptoStorage('session_shelf_crypto', db.execute, (sql) {
   final sqlite.ResultSet resultSet = db.select(sql);
   return resultSet;
-  // This is just an example. Please DO NOT write your secret key in code.
 }, algorithm, secretKey);
 
 late final SqlStorage mysqlStorage;
@@ -36,12 +35,12 @@ Future<void> createMysqlStorages() async {
     port: 3306,
     userName: "user",
     password: "password",
-    databaseName: "shelf_sessions_example", // optional
+    databaseName: "session_shelf_example", // optional
   );
 
   await conn.connect();
 
-  mysqlStorage = SqlStorage('shelf_sessions', conn.execute, (sql) async {
+  mysqlStorage = SqlStorage('session_shelf', conn.execute, (sql) async {
     final resultSet = await conn.execute(sql);
     return resultSet.rows.map((row) => {
       'id': row.colByName('id'),
@@ -51,7 +50,7 @@ Future<void> createMysqlStorages() async {
   });
   await mysqlStorage.createTable();
 
-  mysqlCryptoStorage = SqlCryptoStorage('shelf_sessions_crypto', db.execute, (sql) async {
+  mysqlCryptoStorage = SqlCryptoStorage('session_shelf_crypto', db.execute, (sql) async {
     final resultSet = await conn.execute(sql);
     return resultSet.rows.map((row) => {
       'id': row.colByName('id'),
