@@ -109,5 +109,5 @@ class Session {
   }
   
   factory Session.fromJson(String jsonStr) =>
-      Session.fromMap(json.decode(jsonStr, reviver: Session.reviver) as Map<String, dynamic>);
+      Session.fromMap(json.decode(jsonStr, reviver: reviver) as Map<String, dynamic>);
 }
