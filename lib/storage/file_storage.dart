@@ -81,10 +81,17 @@ abstract class FileStorage extends SessionStorage {
   Future<bool> sessionExist(String sessionId) => getFile(sessionId).exists();
 }
 
+void _initDir(Directory dir) {
+  if (!dir.existsSync()) {
+    dir.createSync();
+  }
+}
+
 class _PlainTextStorage extends FileStorage {
   _PlainTextStorage(Directory dir) {
     super.dir = dir;
     super.regex = RegExp(r'^[A-Za-z0-9]{32}\.json$');
+    _initDir(dir);
   }
 
   @override
@@ -104,6 +111,7 @@ class _CryptoStorage extends FileStorage {
   _CryptoStorage(Directory dir, this.algorithm, this.secretKey) {
     super.dir = dir;
     super.regex = RegExp(r'^[A-Za-z0-9]{32}\$');
+    _initDir(dir);
   }
 
   Cipher algorithm;
