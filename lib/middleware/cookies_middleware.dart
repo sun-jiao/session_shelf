@@ -33,7 +33,7 @@ Map<String, String> parseCookies(dynamic request) {
   try {
     headers = request.headers as Map<String, String>;
   } catch(_) {
-    throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.request`');
+    throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.Request`');
   }
 
   final cookieHeader = headers[HttpHeaders.cookieHeader];
@@ -65,7 +65,7 @@ Map<String, Object> getContext(dynamic request) {
     try {
       return request.shelfContext as Map<String, Object>;
     } catch(_) {
-      throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.request`');
+      throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.Request`');
     }
   }
 }
