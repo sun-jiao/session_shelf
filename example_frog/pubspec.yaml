@@ -1,0 +1,23 @@
+name: example_frog
+description: An new Dart Frog application
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  dart_frog:
+    git:
+      url: https://github.com/sun-jiao/dart_frog.git
+      ref: fix773
+      path: packages/dart_frog
+  example:
+    path: ../example
+  session_shelf:
+    path: ..
+
+dev_dependencies:
+  mocktail: ^1.0.0
+  test: ^1.19.2
+  very_good_analysis: ^5.1.0

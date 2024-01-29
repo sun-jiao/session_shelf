@@ -8,6 +8,8 @@ import 'package:sqlite3/sqlite3.dart' as sqlite show ResultSet;
 
 final algorithm = AesGcm.with256bits();
 // This is just an example. Please DO NOT write your secret key in code.
+// for example, use:
+//    final secretKey = SecretKey(base64Decode(Platform.environment['shelf_session_key'].toString()));
 final secretKey = SecretKey('--Session-Shelf--Session-Shelf--'.codeUnits);
 
 final plainStorage = FileStorage.plain(Directory('session_shelf'));

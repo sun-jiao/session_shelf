@@ -89,6 +89,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.7.0"
+  example:
+    dependency: "direct main"
+    description:
+      path: "../example"
+      relative: true
+    source: path
+    version: "1.0.0"
   ffi:
     dependency: transitive
     description:
@@ -121,6 +128,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.2"
+  http_methods:
+    dependency: transitive
+    description:
+      name: http_methods
+      sha256: "6bccce8f1ec7b5d701e7921dca35e202d425b57e317ba1a37f2638590e29e566"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.1"
   http_multi_server:
     dependency: transitive
     description:
@@ -194,7 +209,7 @@ packages:
     source: hosted
     version: "1.0.5"
   mysql_client:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: mysql_client
       sha256: "6a0fdcbe3e0721c637f97ad24649be2f70dbce2b21ede8f962910e640f753fc2"
@@ -264,8 +279,16 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.2"
+  shelf_router:
+    dependency: "direct main"
+    description:
+      name: shelf_router
+      sha256: f5e5d492440a7fb165fe1e2e1a623f31f734d3370900070b2b1e0d0428d59864
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.4"
   shelf_static:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shelf_static
       sha256: a41d3f53c4adf0f57480578c1d61d90342cd617de7fc8077b1304643c2d85c1e
@@ -305,7 +328,7 @@ packages:
     source: hosted
     version: "1.10.0"
   sqlite3:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: sqlite3
       sha256: c4a4c5a4b2a32e2d0f6837b33d7c91a67903891a5b7dbe706cf4b1f6b0c798c5

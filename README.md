@@ -233,4 +233,6 @@ void setupJsonSerializer() {
 }
 ```
 
-For other examples, see `example.dart`. Or you can implement your own `SessionStorage`.
+For other examples, see `example` and `example_shelf`. Or you can implement your own `SessionStorage`.
+
+For use this package in dart_frog, see `example_frog`. 
