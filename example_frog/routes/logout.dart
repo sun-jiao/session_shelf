@@ -1,7 +1,7 @@
 import 'package:dart_frog/dart_frog.dart';
-import 'package:session_shelf/session/session.dart';
+import 'package:session_shelf/session_shelf.dart';
 
-Future<Response> onRequest(Request request) async {
-  await Session.deleteSession(request);
+Future<Response> onRequest(RequestContext context) async {
+  await Session.deleteSession(context.request);
   return Response.movedPermanently(location: '/');
 }
