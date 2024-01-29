@@ -28,7 +28,7 @@ Middleware sessionMiddleware() {
       cookie.maxAge = expires.difference(DateTime.now()).inSeconds;
       cookie.expires = expires;
       cookie.httpOnly = true;
-      request.addCookie(cookie);
+      cookie.addTo(request);
       final response = await innerHandler(request);
       final session = await Session.storage.getSession(sessionId);
       if (session != null) {
