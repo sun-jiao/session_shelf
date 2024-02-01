@@ -38,6 +38,8 @@ class Session {
   })  : data = data ?? {},
         expires = expires ?? DateTime.now().add(lifetime);
 
+  void save() => storage.saveSession(this, id);
+
   /// Creates a new session, assigns it a unique id and returns that session.
   // ignore: avoid_annotating_with_dynamic
   static Future<Session> createSession(dynamic request) async {
