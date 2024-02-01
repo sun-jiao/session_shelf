@@ -34,6 +34,7 @@ Middleware sessionMiddleware() {
       if (session != null) {
         session.expires = expires;
       }
+      session?.save();
 
       return response;
     };
