@@ -63,6 +63,7 @@ Map<String, Object> getContext(dynamic request) {
     return request.context;
   } else {
     try {
+      // avoid directly import dart_frog as a dependency, otherwise pure-shelf users may be disturbed
       return request.shelfContext as Map<String, Object>;
     } catch(_) {
       throw ArgumentError('The request is neither `shelf.Request` nor `dart_frog.Request`');
